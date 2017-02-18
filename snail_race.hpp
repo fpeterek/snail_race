@@ -11,10 +11,9 @@
 #include <list>
 #include <map>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
-
 #include "snail.hpp"
+#include "window.hpp"
+
 
 class SnailRace {
 
