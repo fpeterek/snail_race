@@ -14,6 +14,14 @@ std::array<std::string, 2> splitStr(const std::string & str, const std::string &
 
 }
 
+void SnailRace::initSnails() {
+
+    Snail::loadFont(FONT);
+    Snail::initTexture(TEXTURE);
+    Snail::initDimensions(1200, 800);
+
+}
+
 void SnailRace::readDataFromFile(const std::string & filename) {
 
     std::ifstream input(filename);
@@ -29,6 +37,9 @@ void SnailRace::readDataFromFile(const std::string & filename) {
 
     int lineCounter = 0;
     std::string line;
+
+    /* Init fonts, textures... before constructing snails */
+    SnailRace::initSnails();
 
     while (lineCounter < 20) {
 
@@ -104,19 +115,57 @@ std::vector<size_t> SnailRace::sortSnails() {
 
 }
 
+void SnailRace::formatOutput(const std::vector<size_t> & snails) {
+
+    if (not snails.size()) {
+        return;
+    }
+
+    if (snails.size() == 1) {
+
+        std::cout << i + 1 << ". position: Snail number " << (snailsInWinningOrder[i] + 1)
+                  << " distance: " << _snails[snailsInWinningOrder[i]].getPosition() << std::endl;
+        return;
+
+    }
+
+
+
+
+}
+
 void SnailRace::outputInfo() {
 
     std::vector<size_t> snailsInWinningOrder = sortSnails();
+    unsigned int position = 1;
 
-    for (size_t i = 0; i < _snails.size(); ++i) {
+    std::vector<size_t> temp;
 
-        std::cout << "Snail number: " << (i + 1) << " Snail position: " << _snails[i].getPosition() << std::endl;
+    for (size_t i = 0; i < snailsInWinningOrder.size() - 1; ++i) {
+
+        temp.emplace_back(snailsInWinningOrder[i]);
+
+        if (_snails[snailsInWinningOrder[i]].getPosition() != _snails[snailsInWinningOrder[i + 1]].getPosition()) {
+
+            formatOutput(temp);
+            temp = std::vector<size_t>;
+
+        }
+
+        ++position;
 
     }
 
-    for (size_t i = 0; i < snailsInWinningOrder.size(); ++i) {
-        std::cout << i + 1 << ". position: Snail number " << (snailsInWinningOrder[i] + 1) << " distance: " << _snails[snailsInWinningOrder[i]].getPosition() << std::endl;
-    }
+    /*for (size_t i = 0; i < snailsInWinningOrder.size(); ++i) {
+        std::cout << i + 1 << ". position: Snail number " << (snailsInWinningOrder[i] + 1)
+                  << " distance: " << _snails[snailsInWinningOrder[i]].getPosition() << std::endl;
+    }*/
+
+}
+
+void SnailRace::setSpeedModifier(const float modifier) {
+
+    _speedModifier = modifier;
 
 }
 
@@ -124,10 +173,39 @@ void SnailRace::startRace() {
 
     unsigned int time = 0;
 
+    Window window(_snails);
+
+    sf::Event event;
+
     while (++time <= _raceLength) {
         updateSnails();
+
+        if (window.open()) {
+            window.render();
+        }
+
+        while (window.getEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.closeWindow();
+            } else if (event.type == sf::Event::KeyPressed) {
+
+                if (event.key.code == sf::Keyboard::Down) {
+                    _speedModifier /= 2;
+                } else if (event.key.code == sf::Keyboard::Up) {
+                    _speedModifier *= 2;
+                }
+
+            }
+        }
+
+        const int sleepFor = (1.f / _speedModifier) * 1000;
+        std::this_thread::sleep_for(std::chrono::milliseconds( sleepFor ));
+
     }
 
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    window.closeWindow();
     outputInfo();
 
 }

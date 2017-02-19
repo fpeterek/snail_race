@@ -1,14 +1,15 @@
 #include "window.hpp"
 
-Window::Window(std::vector<Snail> & snails) : _snails(snails) {
+Window::Window(std::vector<Snail> & snails) : _snails(snails) {
 
-    sf::VideoMode vm = sf::VideoMode::getFullscreenNodes()[3];
+    const unsigned int width = 1200;
+    const unsigned int height = 800;
+
+    sf::VideoMode vm = sf::VideoMode(width, height);
     create(vm, "Snail Race");
-    setScale(vm.width / 800.f);
 
-    for (auto & i : _snails) {
-        i.setScale(getScale());
-    }
+    _background = sf::RectangleShape(sf::Vector2f(width, height));
+    _background.setFillColor(sf::Color::White);
 
 }
 
@@ -16,7 +17,8 @@ void Window::render() {
 
     clear();
 
-    for (const auto & i : _snails) {
+    draw(_background);
+    for (auto & i : _snails) {
         draw(i);
         draw(i.getText());
     }
@@ -27,6 +29,16 @@ void Window::render() {
 
 bool Window::open() {
 
-    return isOpened();
+    return isOpen();
+
+}
+
+bool Window::getEvent(sf::Event & event) {
+    return pollEvent(event);
+}
+
+void Window::closeWindow() {
+
+    close();
 
 }

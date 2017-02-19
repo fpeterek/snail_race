@@ -13,13 +13,16 @@
 class Window : sf::RenderWindow {
 
     std::vector<Snail> & _snails;
+    sf::RectangleShape _background;
 
 public:
 
-    Window();
+    Window(std::vector<Snail> & snails);
 
     void render();
     bool open();
+    void closeWindow();
+    bool getEvent(sf::Event & event);
 
 };
 

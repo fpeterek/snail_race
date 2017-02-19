@@ -8,12 +8,25 @@ int main(int argc, const char * argv[]) {
         return -1;
     }
 
-    std::string filename(argv[1]);
+    float speedModifier = 1.f;
+    if (argc >= 3) {
+        try {
+
+            const std::string modifier(argv[2]);
+            speedModifier = std::stof(modifier);
+
+        } catch (const std::exception & e) {
+            /* Do nothing if an exception is thrown */
+        }
+    }
+
+    const std::string filename(argv[1]);
 
     try {
 
         SnailRace race;
         race.readDataFromFile(filename);
+        race.setSpeedModifier(speedModifier);
         race.startRace();
 
     } catch (const std::invalid_argument & e) {

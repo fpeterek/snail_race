@@ -11,20 +11,26 @@
 
 class Snail : public sf::Sprite {
 
-    static unsigned int snailNumber = 1;
+    static unsigned int snailNumber;
     static sf::Font font;
     static sf::Texture texture;
+    static unsigned int windowWidth;
+    static unsigned int windowHeight;
 
     const unsigned int _mmPerSecond;
     const unsigned int _startingPosition;
     unsigned int _currentPosition;
 
+    unsigned int _number;
     sf::Text _text;
+
+    void updateSprite();
 
 public:
 
     static void loadFont(const std::string & fontName);
     static void initTexture(const std::string & textureName);
+    static void initDimensions(const unsigned int windowWidth, const unsigned int windowHeight);
 
     Snail(const unsigned int startingPosition, const unsigned int mmPerSecond);
     void update();
