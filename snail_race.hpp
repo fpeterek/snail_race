@@ -29,8 +29,9 @@ class SnailRace {
 
     std::vector<size_t> qsort(const std::vector<size_t> & snailIndexes);
     std::vector<size_t> sortSnails();
+    int getMaxDistance();
     void updateSnails();
-    void formatOutput(const std::vector<size_t> & snails);
+    void formatOutput(const std::vector<size_t> & snails, const int firstPos, const int lastPos);
     void outputInfo();
 
 public:

@@ -110,34 +110,73 @@ std::vector<size_t> SnailRace::sortSnails() {
     for (size_t i = 0; i < _snails.size(); ++i) {
         snailIndexes.emplace_back(i);
     }
-    std::vector<size_t> snailPositions = qsort(snailIndexes);
-    return snailPositions;
+    snailIndexes = qsort(snailIndexes);
+    return snailIndexes;
 
 }
 
-void SnailRace::formatOutput(const std::vector<size_t> & snails) {
+void SnailRace::formatOutput(const std::vector<size_t> & snails, const int firstPos, const int lastPos) {
 
-    if (not snails.size()) {
+    const size_t vectorSize = snails.size();
+
+    if (not vectorSize) {
         return;
     }
 
-    if (snails.size() == 1) {
+    if (vectorSize == 1) {
 
-        std::cout << i + 1 << ". position: Snail number " << (snailsInWinningOrder[i] + 1)
-                  << " distance: " << _snails[snailsInWinningOrder[i]].getPosition() << std::endl;
+        std::cout << firstPos << ". position: Snail number " << (snails[0] + 1)
+                  << " distance: " << _snails[snails[0]].getPosition() << std::endl;
         return;
 
     }
 
+    std::cout << firstPos << " - " << lastPos << ". position: Snails number ";
+
+    for (unsigned int i = 0; i < vectorSize - 2; ++i) {
+
+        std::cout << (snails[i] + 1) << ", ";
+
+    }
+    std::cout << (snails[vectorSize - 2] + 1) << " and " << (snails[vectorSize - 1] + 1);
+    std::cout << " distance: " << _snails[snails[0]].getPosition() << std::endl;
 
 
+}
+
+int SnailRace::getMaxDistance() {
+
+    unsigned int time = 0;
+
+    std::vector<Snail> snailsCopy(_snails);
+
+    /* Get position after raceLength + 1 so the snail doesn't walk out of boundaries */
+    while (++time <= _raceLength + 1) {
+
+        for (auto & snail : snailsCopy) {
+            snail.update();
+        }
+
+    }
+
+    int maxDistance = 0;
+    for (auto & snail : snailsCopy) {
+        if (snail.getPosition() > maxDistance) {
+            maxDistance = snail.getPosition();
+        }
+    }
+
+    return maxDistance;
 
 }
 
 void SnailRace::outputInfo() {
 
     std::vector<size_t> snailsInWinningOrder = sortSnails();
-    unsigned int position = 1;
+    /* Just a placeholder, the last item in the vector is ignored */
+    snailsInWinningOrder.emplace_back(-1);
+    unsigned int firstPos = 1;
+    unsigned int lastPos  = 1;
 
     std::vector<size_t> temp;
 
@@ -147,19 +186,23 @@ void SnailRace::outputInfo() {
 
         if (_snails[snailsInWinningOrder[i]].getPosition() != _snails[snailsInWinningOrder[i + 1]].getPosition()) {
 
-            formatOutput(temp);
-            temp = std::vector<size_t>;
+            formatOutput(temp, firstPos, lastPos);
+            temp = std::vector<size_t>();
+
+            firstPos = lastPos + 1;
 
         }
 
-        ++position;
+        ++lastPos;
 
     }
 
-    /*for (size_t i = 0; i < snailsInWinningOrder.size(); ++i) {
+    std::cout << "\n\n" << "---------- Actual output ----------" << "\n\n";
+
+    for (size_t i = 0; i < snailsInWinningOrder.size(); ++i) {
         std::cout << i + 1 << ". position: Snail number " << (snailsInWinningOrder[i] + 1)
                   << " distance: " << _snails[snailsInWinningOrder[i]].getPosition() << std::endl;
-    }*/
+    }
 
 }
 
@@ -176,6 +219,8 @@ void SnailRace::startRace() {
     Window window(_snails);
 
     sf::Event event;
+
+    Snail::setRaceLength(getMaxDistance() + 30);
 
     while (++time <= _raceLength) {
         updateSnails();

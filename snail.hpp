@@ -16,6 +16,7 @@ class Snail : public sf::Sprite {
     static sf::Texture texture;
     static unsigned int windowWidth;
     static unsigned int windowHeight;
+    static float raceLen;
 
     const unsigned int _mmPerSecond;
     const unsigned int _startingPosition;
@@ -31,6 +32,7 @@ public:
     static void loadFont(const std::string & fontName);
     static void initTexture(const std::string & textureName);
     static void initDimensions(const unsigned int windowWidth, const unsigned int windowHeight);
+    static void setRaceLength(const float len);
 
     Snail(const unsigned int startingPosition, const unsigned int mmPerSecond);
     void update();

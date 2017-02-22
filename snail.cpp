@@ -6,6 +6,8 @@ sf::Font Snail::font;
 sf::Texture Snail::texture;
 unsigned int Snail::windowWidth  = 0;
 unsigned int Snail::windowHeight = 0;
+float Snail::raceLen = 15000.f;
+
 
 void Snail::loadFont(const std::string & fontName) {
 
@@ -28,6 +30,12 @@ void Snail::initDimensions(const unsigned int windowW, const unsigned int window
     Snail::windowWidth = windowW;
     Snail::windowHeight = windowH;
 
+}
+
+void Snail::setRaceLength(const float len) {
+
+    Snail::raceLen = len;
+    
 }
 
 Snail::Snail(const unsigned int startingPosition, const unsigned int mmPerSecond) :
@@ -58,7 +66,7 @@ Snail::Snail(const unsigned int startingPosition, const unsigned int mmPerSecond
 
 void Snail::updateSprite() {
 
-    const int x = (windowWidth / 15000.f) * _currentPosition;
+    const int x = (windowWidth / Snail::raceLen) * _currentPosition;
     const int y = (_number - 1) * (Snail::windowWidth / 20);
 
     setPosition(x, y);
